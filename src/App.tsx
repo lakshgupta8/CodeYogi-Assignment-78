@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent, type ChangeEvent } from "react";
+
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
 
 function App() {
-  const [todos, setTodos] = useState([
+  const [todos, setTodos] = useState<Todo[]>([
     { id: 1, text: "Clean my computer", completed: false },
     { id: 2, text: "Buy a keyboard", completed: false },
     { id: 3, text: "Write an article about @xstate/test", completed: false },
   ]);
-  const [showForm, setShowForm] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const handleAddTodo = () => {
     if (inputValue.trim()) {
@@ -40,6 +46,16 @@ function App() {
 
   const thingsToDo = todos.filter((todo) => !todo.completed);
   const thingsDone = todos.filter((todo) => todo.completed);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleAddTodo();
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen font-sans text-gray-900">
@@ -92,11 +108,11 @@ function App() {
             <input
               type="text"
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={handleInputChange}
               placeholder="Write an article about XState"
               className="mb-4 px-4 py-2 border border-gray-200 focus:border-yellow-400 rounded focus:outline-none w-full"
               autoFocus
-              onKeyDown={(e) => e.key === "Enter" && handleAddTodo()}
+              onKeyDown={handleKeyDown}
             />
             <div className="flex gap-3">
               <button
